@@ -12,7 +12,7 @@ TSS-3 (isolated from a saline-alkaline spring, Chiapas, Mexico) and my own strai
 
 - Practice and demonstrate a full NGS bioinformatics pipeline (QC → assembly → annotation → BGC mining → comparative genomics) using real published data
 - Compare genomic features (biosynthetic gene clusters, stress-adaptation genes) between two geographically distant strains of the same species
-- Look for genomic evidence — specifically a carotenoid biosynthesis cluster — that could explain the anti-inflammatory activity (COX-2 inhibition, IC₅₀ = 4.43 µg/mL) I measured experimentally in PZ163977 during my dissertation
+- Look for genomic evidence — specifically a carotenoid biosynthesis cluster — that could explain the anti-inflammatory activity, COX-2 inhibition, I measured experimentally in PZ163977 during my dissertation
 
 ## Data source
 
