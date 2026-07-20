@@ -1,18 +1,19 @@
 # NGS Re-analysis of *Exiguobacterium profundum* TSS-3
 
-**Status:** 🔄 In progress — QC and read trimming complete, hybrid genome assembly running
+**Status:** ✅ Complete — all planned analysis stages finished (QC → assembly → annotation → BGC mining → comparative genomics)
 
-An independent bioinformatics project re-analyzing publicly available Illumina + Nanopore sequencing data for *Exiguobacterium profundum* TSS-3, using entirely free, cloud-based tools (Galaxy, KBase, antiSMASH). This strain is closely related to *E. profundum* PZ163977, which I isolated and characterized during my MSc dissertation (GenBank: PZ163977).
+An independent bioinformatics project re-analyzing publicly available Illumina + Nanopore sequencing data for *Exiguobacterium profundum* TSS-3, using entirely free, cloud-based tools (Galaxy, KBase, antiSMASH, EzBioCloud). This strain is closely related to *E. profundum* PZ163977, which I isolated and characterized during my MSc dissertation (GenBank: PZ163977).
+
+A full write-up (Introduction, Methods, Results, Discussion) is available as a manuscript-style document — see `manuscript.docx` in this repo.
 
 ---
 
 ## Motivation
 
-TSS-3 (isolated from a saline-alkaline spring, Chiapas, Mexico) and my own strain PZ163977 (isolated from coastal fish water, Kerala, India) are the same species from very different environments. Re-analyzing TSS-3's published genome lets me:
+TSS-3 (isolated from a saline-alkaline spring, Chiapas, Mexico) and my own strain PZ163977 (isolated from coastal fish water, Kerala, India) are the same species from very different environments. Re-analyzing TSS-3's published genome let me:
 
-- Practice and demonstrate a full NGS bioinformatics pipeline (QC → assembly → annotation → BGC mining → comparative genomics) using real published data
-- Compare genomic features (biosynthetic gene clusters, stress-adaptation genes) between two geographically distant strains of the same species
-- Look for genomic evidence — specifically a carotenoid biosynthesis cluster — that could explain the anti-inflammatory activity, COX-2 inhibition, I measured experimentally in PZ163977 during my dissertation
+- Independently reproduce a full NGS bioinformatics pipeline (QC → assembly → annotation → BGC mining → comparative genomics) using real published data, entirely on free infrastructure
+- Look for genomic evidence of carotenoid biosynthesis that could provide context for the anti-inflammatory activity (COX-2 inhibition) I measured experimentally in PZ163977 during my dissertation
 
 ## Data source
 
@@ -24,74 +25,65 @@ TSS-3 (isolated from a saline-alkaline spring, Chiapas, Mexico) and my own strai
 | Reference publication | Rincón-Rosales et al. 2023, *Microbiology Resource Announcements* 12:e00171-23 |
 | Illumina run | SRR24916835 (NovaSeq 6000, paired-end, 12,134,956 read pairs) |
 | Nanopore run | SRR24916834 (MinION, 64,387 reads) |
-| Published assembly (reference) | GCA_029026745.1 |
-| Original assembly method | Unicycler hybrid v0.4.8 + NCBI PGAP annotation |
+| Reference assembly | GCA_029026745.1 |
+| Type strain (for ANI) | GCF_025234635.1 |
 
-All raw data is public and was retrieved directly from NCBI SRA / ENA. No new wet-lab data was generated in this project — this is a **computational re-analysis**, and is documented as such throughout.
+All raw data is public; this is a **computational re-analysis**, not new wet-lab data generation.
 
 ## Pipeline and tools
 
-All analysis run on free-tier platforms: [Galaxy](https://usegalaxy.org) (usegalaxy.org / usegalaxy.eu) and [KBase](https://www.kbase.us).
-
 | Stage | Tool | Status |
 |---|---|---|
-| Read QC | FastQC v0.12.1 | ✅ Complete |
-| Illumina trimming | Trimmomatic v0.39 | ✅ Complete |
-| Nanopore filtering | Filtlong v0.3.1 | ✅ Complete |
-| Hybrid genome assembly | Unicycler | 🔄 Running |
-| Assembly QC | QUAST, CheckM | ⏳ Pending |
-| Annotation | Prokka | ⏳ Pending |
-| BGC mining | antiSMASH v7 | ⏳ Pending |
-| Comparative genomics | ANI (EzBioCloud) | ⏳ Pending |
+| Read QC | FastQC v0.12.1 | ✅ |
+| Illumina trimming | Trimmomatic v0.39 | ✅ |
+| Nanopore filtering | Filtlong v0.3.1 | ✅ |
+| Hybrid genome assembly | Unicycler v0.5.1 | ✅ |
+| Assembly QC | QUAST v5.3.0, CheckM v1.0.18 | ✅ |
+| Annotation | Prokka v1.14.6 | ✅ |
+| BGC mining | antiSMASH v8.0.4 | ✅ |
+| Comparative genomics | ANI (EzBioCloud, OrthoANIu) | ✅ |
+
+All run on free-tier platforms: [Galaxy](https://usegalaxy.org), [KBase](https://www.kbase.us), [antiSMASH](https://antismash.secondarymetabolites.org), [EzBioCloud](https://www.ezbiocloud.net).
 
 ---
 
-## Results so far
+## Results
 
-### 1. Quality control (FastQC)
+### Genome assembly
 
-| Dataset | Reads | Bases | Mean quality | GC% | Notes |
-|---|---|---|---|---|---|
-| Illumina R1 (SRR24916835_1) | 12,134,956 | 1.8 Gbp | Q30–31 | 48% | Clean, no adapters detected |
-| Illumina R2 (SRR24916835_2) | 12,134,956 | 1.8 Gbp | Q30–31 | 48% | Clean; minor GC-content WARN (not contamination) |
-| Nanopore (SRR24916834) | 64,387 | 583.8 Mbp | Lower/variable (expected for platform) | 47% | Length range 43 bp–141 kb; WARN/FAIL flags typical for Nanopore, not data-quality concerns |
+Hybrid assembly (Unicycler) produced a **fully circularized chromosome (2,880,082 bp) + plasmid (4,645 bp)** — closely matching the originally published assembly (2.8 Mb chromosome + 4.6 kb plasmid, GC 48.16%).
 
-All GC-content values closely match the published TSS-3 genome GC content (48.16%, chromosome), indicating no detectable contamination.
+| Metric | Published | This assembly |
+|---|---|---|
+| Chromosome | ~2.8 Mb | 2,880,082 bp (circular) |
+| Plasmid | ~4.6 kb | 4,645 bp |
+| GC content | 48.16% | 48.15% |
 
-**Figures:** [`figures/fig1_R1_quality.png`](figures/fig1_R1_quality.png) · [`figures/fig2_R1_gc.png`](figures/fig2_R1_gc.png) · [`figures/fig3_R2_quality.png`](figures/fig3_R2_quality.png) · [`figures/fig4_R2_gc.png`](figures/fig4_R2_gc.png) · [`figures/fig5_nanopore_quality.png`](figures/fig5_nanopore_quality.png) · [`figures/fig6_nanopore_gc.png`](figures/fig6_nanopore_gc.png)
+**QUAST** (vs. reference GCA_029026745.1): **100% genome fraction, 0 misassemblies**, 0.45 mismatches/100kbp, duplication ratio 1.
 
-### 2. Illumina read trimming (Trimmomatic)
+**CheckM**: **99.34% completeness, 0.66% contamination** (271/273 single-copy markers present, lineage c__Bacilli).
 
-```
-Tool: Trimmomatic 0.39 (paired-end mode)
-Parameters: ILLUMINACLIP:TruSeq3-PE:2:30:10:8:true LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:50, Phred33
+![QUAST cumulative length](figures/fig9_quast_cumulative_length.png)
+![QUAST GC content](figures/fig10_quast_gc_content.png)
 
-Input read pairs:    12,134,956
-Both surviving:      12,134,888 (100.00%)
-Dropped:                     68 (0.00%)
-```
+### Annotation (Prokka)
 
-Essentially all reads survived trimming, consistent with the high input quality shown by FastQC.
+**2,936 CDS**, 27 rRNA, 67 tRNA, 1 tmRNA — closely matching the original PGAP annotation (2,900 CDS, ~1.2% difference, consistent with expected variation between annotation pipelines).
 
-### 3. Nanopore read filtering (Filtlong)
+### Biosynthetic gene cluster mining (antiSMASH)
 
-```
-Tool: Filtlong 0.3.1
-Parameters: --min_length 500 --min_mean_q 7
-```
+Two terpene-associated regions identified on the chromosome:
 
-| Metric | Before | After | Retained |
-|---|---|---|---|
-| Reads | 64,387 | 59,061 | 91.7% |
-| Bases | 583.8 Mbp | 582.1 Mbp | 99.7% |
+| Region | Type | Core genes |
+|---|---|---|
+| 1.1 | Terpene-precursor | Farnesyl diphosphate synthase, dxs |
+| 1.2 | Terpene | **crtB, crtN, crtNb, crtNc** |
 
-Filtering removed mostly short, low-information fragments (8.3% of reads by count) while retaining 99.7% of total sequence data.
+The Region 1.2 gene set corresponds to the **C30 (diapocarotenoid) branch** of bacterial carotenoid biosynthesis — structurally analogous to the staphyloxanthin pathway in *S. aureus*. This confirms native carotenoid biosynthetic capacity in TSS-3, providing genomic context for the carotenoid pigments identified in my own strain PZ163977. **Important caveat, stated honestly:** this is the C30 pathway, not the C40 (crtI/crtY/crtZ) pathway that typically produces the specific carotenoids (astaxanthin, lycoxanthin) I measured in PZ163977 — so this is complementary evidence of species-level carotenoid capacity, not a direct compound-level match.
 
-**Figures:** [`figures/fig7_nanopore_filtered_quality.png`](figures/fig7_nanopore_filtered_quality.png) · [`figures/fig8_nanopore_filtered_gc.png`](figures/fig8_nanopore_filtered_gc.png)
+### Comparative genomics (ANI)
 
-### 4. Genome assembly — in progress
-
-Hybrid assembly (Illumina + Nanopore) via **Unicycler**, matching the method used in the original publication. Results (contig count, N50, assembly length) will be added here once complete, along with QUAST and CheckM quality metrics benchmarked against the published reference assembly (GCA_029026745.1).
+**96.21% ANI** against the *E. profundum* type strain (GCF_025234635.1) — confirms species-level identity (≥96% threshold).
 
 ---
 
@@ -100,13 +92,15 @@ Hybrid assembly (Illumina + Nanopore) via **Unicycler**, matching the method use
 - Retrieval of raw sequencing data from NCBI SRA / ENA
 - Illumina and Nanopore read QC and interpretation (FastQC)
 - Read trimming and long-read filtering (Trimmomatic, Filtlong)
+- Hybrid genome assembly (Unicycler) and quality assessment (QUAST, CheckM)
+- Bacterial genome annotation (Prokka)
+- Biosynthetic gene cluster mining and interpretation (antiSMASH)
+- Comparative genomics (ANI)
 - Cloud-based bioinformatics workflows (Galaxy, KBase) — no local compute required
-- Troubleshooting real pipeline failures (quality-encoding detection errors, tool/server compatibility issues) using job logs
+- Troubleshooting real pipeline failures (quality-encoding detection errors, tool/server compatibility, file-format mismatches) using job logs
 
 ## Author
 
 **Afnan Asharaf** — MSc Microbiology, independent researcher
 GenBank depositions: PZ163764, PZ163949, PZ163977 · ASM member
 GitHub: [@AfnanAsharf](https://github.com/AfnanAsharf)
-
-*This repository will be updated as assembly, annotation, and comparative genomics stages complete.*
