@@ -4,7 +4,7 @@
 
 An independent bioinformatics project re-analyzing publicly available Illumina + Nanopore sequencing data for *Exiguobacterium profundum* TSS-3, using entirely free, cloud-based tools (Galaxy, KBase, antiSMASH, EzBioCloud). This strain is closely related to *E. profundum* PZ163977, which I isolated and characterized during my MSc dissertation (GenBank: PZ163977).
 
-A full write-up (Introduction, Methods, Results, Discussion) is available as a manuscript-style document — see `manuscript.docx` in this repo.
+A full write-up (Introduction, Methods, Results, Discussion) is available as a manuscript-style document — see `Comparative Genomic Re-analysis of Exiguobacterium profundum Strain TSS-3 Toward a Genomic Basis for Anti-Inflammatory Carotenoid Activity.docx` in this repo.
 
 ---
 
